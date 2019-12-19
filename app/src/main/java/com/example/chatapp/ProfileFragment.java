@@ -76,8 +76,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("user_name").getValue().toString().trim();
                 String status = dataSnapshot.child("status").getValue().toString().trim();
-//                String image = dataSnapshot.child("image").getValue().toString();
-//                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                String image = dataSnapshot.child("image").getValue().toString();
+                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                 edtUserName.setText(name);
                 edtAboutYou.setText(status);
@@ -98,8 +98,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.user_profilePic:
-                //Using Dependencies
-                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
+//                Using Dependencies
+//                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1).start(getActivity());
+
+                Intent galleryIntent = new Intent();
+                galleryIntent.setType("image/*");
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(galleryIntent,"SELECT IMAGE"),GALLERY_PIC);
 
                 break;
             case R.id.btn_updtInfo:
@@ -119,6 +124,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     HashMap<String,String> userMap=new HashMap<>();
                     userMap.put("user_name",userName);
                     userMap.put("status",status);
+                    userMap.put("image","default");
+                    userMap.put("thumb_image","default");
                     databaseReference.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -157,7 +164,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()){
-                            String downloadUrl = task.getResult().toString();
+                            String downloadUrl = task.getResult().getStorage().getDownloadUrl().toString();
                             databaseReference.child("image").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -176,6 +183,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
                 Exception exception = result.getError();
             }
+        }else {
+            Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
         }
     }
 }

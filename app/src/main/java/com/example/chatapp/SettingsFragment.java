@@ -30,9 +30,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    EditText edt_chngPassword;
-    Button btn_chngPassword, btn_MainChngPassword, btn_rmvAccount, btn_logOut;
-    ProgressDialog progressDialog;
+    private EditText edt_chngPassword;
+    private Button btn_chngPassword, btn_MainChngPassword, btn_rmvAccount, btn_logOut;
+    private ProgressDialog progressDialog;
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
 
